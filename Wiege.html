@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Wiege - VIVINOS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('https://i.imgur.com/IgZrxIk.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #loginScreen {
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    .profiles {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .profile {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .profile:hover {
+      transform: scale(1.1);
+    }
+
+    .profile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile.selected {
+      box-shadow: 0 0 12px 4px #00ff88;
+      border-color: #00ff88;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 20px;
+    }
+
+    #startBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #ffffffcc;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #startBtn:hover {
+      background: #ffffffee;
+    }
+
+    #karaokeSection {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    #lyrics {
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px black;
+      transition: opacity 0.5s ease;
+      opacity: 1;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+    }
+
+    #playButton {
+      background: none;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    #playButton img {
+      width: 90px;
+      height: auto;
+      transition: transform 0.2s ease;
+    }
+
+    #playButton img:hover {
+      transform: scale(1.1);
+    }
+
+    #loginStatus {
+      font-size: 28px;
+      margin-top: 40px;
+    }
+
+    #logoDisplay {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      font-weight: bold;
+      text-shadow: 3px 3px 6px black;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      z-index: 1000;
+    }
+
+    #logoDisplay.show {
+      opacity: 1;
+    }
+
+    #logoDisplay.hide {
+      opacity: 0;
+    }
+
+    #songTitle {
+      margin-top: 20px;
+      font-size: 32px;
+      text-shadow: 2px 2px 4px black;
+    }
+
+    #userInfo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 16px;
+      background: rgba(0,0,0,0.4);
+      padding: 8px 12px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #userInfo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen">
+    <h1>Welcome to Alien Stage Karaoke</h1>
+    <div class="profiles">
+      <div class="profile" onclick="selectProfile('User 1')">
+        <img src="https://i.imgur.com/I5PokqU.jpeg" />
+      </div>
+      <div class="profile" onclick="selectProfile('User 2')">
+        <img src="https://i.imgur.com/htoEpfn.jpeg" />
+      </div>
+      <div class="profile" onclick="selectProfile('User 3')">
+        <img src="https://i.imgur.com/yc4FxqO.jpeg" />
+      </div>
+      <div class="profile" onclick="selectProfile('User 4')">
+        <img src="https://i.imgur.com/PjMLu9F.jpeg" />
+      </div>
+      <div class="profile" onclick="selectProfile('User 5')">
+        <img src="https://i.imgur.com/a1ABbEJ.jpeg" />
+      </div>
+      <div class="profile" onclick="selectProfile('User 6')">
+        <img src="https://i.imgur.com/9kRIOZB.jpeg" />
+      </div>
+    </div>
+    <div id="nameInput" class="hidden">
+      <input type="text" id="username" placeholder="Enter your name" />
+      <br />
+      <button id="startBtn" onclick="simulateLogin()">Start Singing</button>
+    </div>
+  </div>
+
+  <div id="loginStatus" class="hidden">Logging in as <span id="displayName"></span>...</div>
+
+  <div id="karaokeSection" class="hidden">
+    <div id="songTitle">Wiege | Alien Stage</div>
+    <button id="playButton" onclick="startAudio()">
+      <img src="https://i.imgur.com/ykDZif5.jpeg" alt="Play" />
+    </button>
+    <div id="lyrics"></div>
+    <audio id="audioPlayer">
+      <source src="https://media.vocaroo.com/mp3/1oVBoX028KYJ" type="audio/mp3" />
+      Your browser does not support the audio tag.
+    </audio>
+  </div>
+
+  <div id="logoDisplay">Wiege | Alien Stage</div>
+  <div id="userInfo" class="hidden">
+    <img id="userPic" src="" alt="Profile" />
+    <span id="userNameID"></span>
+  </div>
+
+  <script>
+    const audioPlayer = document.getElementById('audioPlayer');
+    const lyricsEl = document.getElementById('lyrics');
+    const karaokeSection = document.getElementById('karaokeSection');
+    const loginScreen = document.getElementById('loginScreen');
+    const loginStatus = document.getElementById('loginStatus');
+    const logoDisplay = document.getElementById('logoDisplay');
+    const userInfo = document.getElementById('userInfo');
+    const userPic = document.getElementById('userPic');
+    const userNameID = document.getElementById('userNameID');
+
+    let selectedProfile = "";
+    let selectedProfileImage = "";
+    let started = false;
+    let currentIndex = -1;
+
+    const lyrics = [
+      { time: 26.6, text: "Heum eum-eum aga" },
+      { time: 31.3, text: "Eoseo jamdeulgeora" },
+      { time: 35.7, text: "Nuneul gamyeon nakwoneseo" },
+      { time: 39.2, text: "Dwingollo" },
+      { time: 46.6, text: "Heum eum-eum aga" },
+      { time: 49.6, text: "Seureuk jamdeulgeora" },
+      { time: 55.1, text: "Geuse chora han dal-eun" },
+      { time: 60.9, text: "Kkum-eul kkuna" },
+      { time: 65.5, text: "Goyohage naerineun" },
+      { time: 70.3, text: "Chadichan siseon" },
+      { time: 75.2, text: "Duryeowo tteoreotdeon" },
+      { time: 80.0, text: "Yeorin galdaecheoreom" },
+      { time: 86.5, text: "Budeureoun barami chumchugo" },
+      { time: 95.7, text: "Ganjeolhage sumgyeoreul seumyeodul ttae" },
+      { time: 105.5, text: "Jayeonseure pum-eul geoya" },
+      { time: 111.2, text: "Noraehadeon bada" },
+      { time: 144.8, text: "Galmaenge jeojin nalgae" },
+      { time: 149.4, text: "Gyeowae pelchyeo" },
+      { time: 155.4, text: "Sonbadakmankeum doemhan saessakcheoreom" },
+      { time: 165.5, text: "Buseureojin seulpeumi chumchugo" },
+      { time: 174.6, text: "Mudeonhage saebyeog-eul kkaelyeo hal ttae" },
+      { time: 184.7, text: "Jayeonseure pum-eul geoya" },
+      { time: 189.1, text: "Noraehadeon bada" },
+      { time: 194, text: "..." }
+    ];
+
+    function selectProfile(name) {
+      selectedProfile = name;
+
+      const profileImgs = {
+        'User 1': 'https://i.imgur.com/I5PokqU.jpeg',
+        'User 2': 'https://i.imgur.com/htoEpfn.jpeg',
+        'User 3': 'https://i.imgur.com/yc4FxqO.jpeg',
+        'User 4': 'https://i.imgur.com/PjMLu9F.jpeg',
+        'User 5': 'https://i.imgur.com/a1ABbEJ.jpeg',
+        'User 6': 'https://i.imgur.com/9kRIOZB.jpeg'
+      };
+
+      selectedProfileImage = profileImgs[name];
+
+      document.querySelectorAll('.profile').forEach(p => p.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      document.getElementById("nameInput").classList.remove("hidden");
+    }
+
+    function simulateLogin() {
+      const name = document.getElementById("username").value.trim();
+      if (name === "") {
+        alert("Please enter your name!");
+        return;
+      }
+
+      document.getElementById("displayName").textContent = name;
+      loginScreen.classList.add("hidden");
+      loginStatus.classList.remove("hidden");
+
+      const userID = Math.floor(1000 + Math.random() * 9000);
+      userPic.src = selectedProfileImage;
+      userNameID.textContent = `${name} | ID: ${userID}`;
+
+      setTimeout(() => {
+        loginStatus.classList.add("hidden");
+        karaokeSection.classList.remove("hidden");
+        userInfo.classList.remove("hidden");
+      }, 2000);
+    }
+
+    function startAudio() {
+      if (started) return;
+      started = true;
+      document.getElementById('playButton').style.display = 'none';
+      audioPlayer.play();
+
+      // Show logo
+      logoDisplay.classList.add('show');
+      setTimeout(() => {
+        logoDisplay.classList.remove('show');
+        logoDisplay.classList.add('hide');
+      }, 2500);
+
+      // Hide all other elements except lyrics
+      document.querySelectorAll('body > *:not(#karaokeSection):not(#logoDisplay):not(#userInfo)').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      userInfo.style.display = 'flex';
+
+      setInterval(() => {
+        const currentTime = audioPlayer.currentTime;
+        for (let i = lyrics.length - 1; i >= 0; i--) {
+          if (currentTime >= lyrics[i].time) {
+            if (currentIndex !== i) {
+              currentIndex = i;
+              updateLyrics(lyrics[i].text);
+            }
+            break;
+          }
+        }
+      }, 300);
+    }
+
+    function updateLyrics(text) {
+      lyricsEl.style.opacity = 0;
+      setTimeout(() => {
+        lyricsEl.textContent = text;
+        lyricsEl.style.opacity = 1;
+      }, 200);
+    }
+  </script>
+</body>
+</html>
